@@ -137,7 +137,7 @@ class DataTrainingArguments:
     dataset_config_name: Optional[str] = field(
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
-    train_file: Optional[str] = field(default='RF_2_family.fa.csv', metadata={"help": "The input training data file (a text file)."})
+    train_file: Optional[str] = field(default='Rfam_sequences.fa.txt', metadata={"help": "The input training data file (a text file)."})
     validation_file: Optional[str] = field(
         default=None,
         metadata={"help": "An optional input evaluation data file to evaluate the perplexity on (a text file)."},
@@ -181,7 +181,7 @@ class DataTrainingArguments:
         },
     )
     max_train_samples: Optional[int] = field(
-        default=5000,
+        default=None,
         metadata={
             "help": (
                 "For debugging purposes or quicker training, truncate the number of training examples to this "
@@ -190,7 +190,7 @@ class DataTrainingArguments:
         },
     )
     max_eval_samples: Optional[int] = field(
-        default=1000,
+        default=None,
         metadata={
             "help": (
                 "For debugging purposes or quicker training, truncate the number of evaluation examples to this "
@@ -231,10 +231,14 @@ def main():
     training_args.do_predict=False
     training_args.eval_steps=3
     training_args.evaluation_strategy="epoch"
-    #training_args.output_dir='./output'
-    training_args.overwrite_output_dir = True
-    training_args.resume_from_checkpoint = False
-
+    training_args.num_train_epochs = 100
+    training_args.per_device_train_batch_size = 16
+    training_args.per_device_eval_batch_size = 16
+    training_args.overwrite_output_dir = False
+    training_args.resume_from_checkpoint = True
+    training_args.save_total_limits = 3
+    training_args.log_level = 'info'
+    training_args.logging_steps = 2000
 
     #print("TRAINING ARGS::::::::::::::::::\n",training_args)
     # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
@@ -391,7 +395,7 @@ def main():
             "pad_token": '[PAD]'
         }
         #tokenizer = PreTrainedTokenizerFast(cls_token='[CLS]', mask_token="[MASK]", tokenizer_file="bert-rna-tokenizer-1.json", pad_token='[PAD]')
-        tokenizer = PreTrainedTokenizerFast(tokenizer_file="bert-rna-tokenizer-1.json", mask_token="[MASK]", pad_token="[PAD]", cls_token='[CLS]', sep_token='[SEP]')
+        tokenizer = PreTrainedTokenizerFast(tokenizer_file="bert-rna-tokenizer.json", mask_token="[MASK]", pad_token="[PAD]", cls_token='[CLS]', sep_token='[SEP]')
         #tokenizer.mask_token = '[MASK]'
         #tokenizer.pad_token = '[PAD]'
         print("**************MASK TOKEN:", tokenizer.mask_token)

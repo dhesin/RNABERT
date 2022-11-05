@@ -1,8 +1,3 @@
-accelerate
-torch >= 1.3
-datasets >= 1.8.0
-sentencepiece != 0.1.92
-protobuf
-evaluate
-scikit-learn
-git+https://github.com/huggingface/transformers
+version https://git-lfs.github.com/spec/v1
+oid sha256:f990788a58f86edeb3969404f8063808ce81a8e8d668fb4f457cb25b295151da
+size 145
