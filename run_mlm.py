@@ -146,7 +146,7 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
     validation_split_percentage: Optional[int] = field(
-        default=15,
+        default=3,
         metadata={
             "help": "The percentage of the train set used as validation set in case there's no validation split"
         },
@@ -229,14 +229,16 @@ def main():
     training_args.do_train=True
     training_args.do_eval=True
     training_args.do_predict=False
-    training_args.eval_steps=3
-    training_args.evaluation_strategy="epoch"
+    training_args.eval_steps=10000
+    training_args.evaluation_strategy="steps"
     training_args.num_train_epochs = 100
     training_args.per_device_train_batch_size = 16
     training_args.per_device_eval_batch_size = 16
-    training_args.overwrite_output_dir = False
+    training_args.gradient_accumulation_steps = 2
+    training_args.overwrite_output_dir = True
     training_args.resume_from_checkpoint = True
-    training_args.save_total_limits = 3
+    training_args.model_name_or_path = '/home/desin/CS230/RNABERT/out_mlm/checkpoint-9500'
+    training_args.save_total_limit = 3
     training_args.log_level = 'info'
     training_args.logging_steps = 2000
 
