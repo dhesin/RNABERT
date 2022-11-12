@@ -236,8 +236,8 @@ def main():
     training_args.per_device_eval_batch_size = 16
     training_args.gradient_accumulation_steps = 2
     training_args.overwrite_output_dir = True
-    training_args.resume_from_checkpoint = True
-    training_args.model_name_or_path = '/home/desin/CS230/RNABERT/out_mlm/checkpoint-9500'
+    training_args.resume_from_checkpoint = False
+    #training_args.model_name_or_path = '/home/desin/CS230/RNABERT/out_mlm/checkpoint-9500'
     training_args.save_total_limit = 3
     training_args.log_level = 'info'
     training_args.logging_steps = 2000

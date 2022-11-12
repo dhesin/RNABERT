@@ -9,6 +9,8 @@ from tokenizers.processors import TemplateProcessing
 import glob
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 bert_tokenizer = Tokenizer(WordLevel(unk_token="[UNK]"))
 
@@ -29,11 +31,12 @@ rna_seqs_4_pretrain = []
 rna_seqs_4_tokenizer = []
 
 file_ind = 0
-seq_lengths = []
+seq_lengths_all = []
 #file_list = os.listdir("/home/desin/CS230/RNABERT/data/Rfam")
 #print(file_list)
 for file_name in glob.glob("/home/desin/CS230/RNABERT/data/Rfam/*"):
     print(file_name)
+    seq_lengths = []
 
     file_rna = open(file_name, 'r')
     Lines = file_rna.readlines()
@@ -51,29 +54,33 @@ for file_name in glob.glob("/home/desin/CS230/RNABERT/data/Rfam/*"):
                 rna_str_1 = rna_str_1 + ch.lower() + ' '
                 rna_str_2 = rna_str_2 + ch.lower() + ' '
             #rna_str = rna_str[:-1]
-            rna_seqs_4_pretrain.append(rna_str_1)
-            rna_seqs_4_tokenizer.append(rna_str_2)
-            seq_lengths.append(len(line))
-            file_ind = file_ind + 1
 
- 
+            if len(line)/2 < 400:
+                rna_seqs_4_pretrain.append(rna_str_1)
+                rna_seqs_4_tokenizer.append(rna_str_2)
+                seq_lengths.append(len(line)/2)
 
-#print(rna_seqs)
+    seq_lengths_all.append(np.array(seq_lengths))
+    file_ind = file_ind + 1
+    #if file_ind > 3:
+    #    break
+
+
+
+# make data:
+print(seq_lengths_all[0].shape)
+
+# plot
+fig, ax = plt.subplots()
+VP = ax.boxplot(seq_lengths_all)
+plt.savefig("./boxplot.png")
+plt.show()
+
 
 file_rna = open('./Rfam_sequences.fa.txt', 'w')
 file_rna.writelines(rna_seqs_4_tokenizer)
 file_rna.close()
+#bert_tokenizer.train_from_iterator(rna_seqs_4_tokenizer, trainer=trainer)
+#bert_tokenizer.save("./bert-rna-tokenizer.json")
 
 
-bert_tokenizer.train_from_iterator(rna_seqs_4_tokenizer, trainer=trainer)
-
-
-
-
-#files = [f"data/wikitext-103-raw/wiki.{split}.raw" for split in ["test", "train", "valid"]]
-#bert_tokenizer.train(files, trainer)
-bert_tokenizer.save("./bert-rna-tokenizer.json")
-
-
-print("MAX LEN:", max(seq_lengths), " MIN_LEN:", min(seq_lengths))
-print(np.histogram(seq_lengths, bins=100))
